@@ -12,7 +12,6 @@ public:
 	virtual void win() override;
 	virtual void lose() override;
 	virtual void draw() override;
-private:
-
+	virtual void showMessage(const std::string & message) override;
 };
 

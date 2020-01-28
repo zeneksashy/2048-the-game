@@ -30,16 +30,14 @@ Board::~Board()
 
 void Board::generateTile()
 {
-	if (!checkAvailable())
-	{
-		game_over = true;
-		lose();
-	}
-
+	// if all positions full and any merge is imposible
+	//if (!checkAvailable() && !(onLeftArrowPressed(false) || !onRightArrowPressed(false) || !onDownArrowPressed(false) || !onUpArrowPressed(false)))
+	//{
+	//	game_over = true;
+	//	lose();
+	//}
 	Position pos = randomizePosition();
-	auto new_tile = Tile(randomize_tile() << 1,pos);
-	positions[pos.x][pos.y] = new_tile;
-	available[pos.x][pos.y] = false;
+	positions[pos.x][pos.y].setValue(randomize_tile() << 1);
 }
 
 
@@ -48,7 +46,7 @@ Position Board::randomizePosition()
 	static std::uniform_int_distribution<rng_type::result_type> udist(0, 3);
 	static rng_type rng(std::chrono::steady_clock::now().time_since_epoch().count());
 	Position pos = { udist(rng), udist(rng)};
-	while (!available[pos.x][pos.y])
+	while (positions[pos.x][pos.y].getValue() != -1 )
 	{
 		pos.x = udist(rng);
 		pos.y = udist(rng);
@@ -62,7 +60,7 @@ bool Board::checkAvailable()
 	{
 		for (size_t j = 0; j < max; j++)
 		{
-			if (available[i][j])
+			if (positions[i][j].getValue()== -1)
 				return true;
 		}
 	}
@@ -71,54 +69,100 @@ bool Board::checkAvailable()
 
 constexpr bool Board::mergeSubOperation(int i, int j, int i1, int j1)
 {
-	available[i][j] = true;
-	available[i1][j1] = false;
+	
 	if (positions[i][j].getValue() == 2048)
 	{
-		game_over = true;
 		win();
 	}
 	return true;
 }
 
-bool Board::onLeftArrowPressed()
+bool Board::onLeftArrowPressed(bool execute)
 {
 	bool mergePossible = false;
+	Actions act;
 	for (size_t i = 0; i < max; i++)
 		for (size_t j = 1; j < max; j++)
-			if (Tile::merge(positions[i][j - 1], positions[i][j]))
-				mergePossible = mergeSubOperation(i, j, i, j - 1);
+		{
+			Tile::isMergePossible(positions[i][j - 1], positions[i][j], act);
+			if (act != Actions::None)
+			{
+				mergePossible = true;
+				if (execute)
+				{
+					Tile::merge(positions[i][j - 1], positions[i][j]);
+					mergeSubOperation(i, j, i, j - 1);
+				}
+					
+			}
+		}
 	return mergePossible;
 }
 
-bool Board::onRightArrowPressed()
+bool Board::onRightArrowPressed(bool execute)
 {
 	bool mergePossible = false;
+	Actions act;
 	for (size_t i = 0; i < max; i++)
 		for (int j = max - 2; j >= 0; j--)
-			if (Tile::merge(positions[i][j + 1], positions[i][j]))
-				mergePossible = mergeSubOperation(i, j, i, j + 1);
+		{
+			Tile::isMergePossible(positions[i][j + 1], positions[i][j], act);
+			if (act != Actions::None)
+			{
+				mergePossible = true;
+				if (execute)
+				{
+					Tile::merge(positions[i][j + 1], positions[i][j]);
+					mergeSubOperation(i, j, i, j + 1);
+				}
+					
+			}
+		}
 
 	return mergePossible;
 }
 
-bool Board::onUpArrowPressed()
+bool Board::onUpArrowPressed(bool execute)
 {
 	bool mergePossible = false;
+	Actions act;
 	for (size_t i = 0; i < max; i++)
 		for (size_t j = 1; j < max; j++)
-			if (Tile::merge(positions[j-1][i], positions[j][i]))
-				mergePossible = mergeSubOperation(i, j, j-1, i);
+		{
+			Tile::isMergePossible(positions[j - 1][i], positions[j][i], act);
+			if (act != Actions::None)
+			{
+				mergePossible = true;
+				if (execute)
+				{
+					Tile::merge(positions[j-1][i], positions[j][i]);
+					mergeSubOperation(i, j, j - 1, i);
+				}
+					
+			}
+		}
 	return mergePossible;
 }
 
-bool Board::onDownArrowPressed()
+bool Board::onDownArrowPressed(bool execute)
 {
 	bool mergePossible = false;
+	Actions act;
 	for (size_t i = 0; i < max; i++)
 		for (int j = max - 2; j >= 0; j--)
-			if (Tile::merge(positions[j+1][i], positions[j][i]))
-				mergePossible = mergeSubOperation(i, j, j+1, i);
-
+		{
+			Tile::isMergePossible(positions[j + 1][i], positions[j][i], act);
+			if (act != Actions::None)
+			{
+				mergePossible = true;
+				if (execute)
+				{
+					Tile::merge(positions[j + 1][i], positions[j][i]);
+					mergeSubOperation(i, j, j + 1, i);
+				}
+					
+			}
+		}
+			
 	return mergePossible;
 }

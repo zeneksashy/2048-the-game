@@ -39,7 +39,7 @@ void GameLoop::loop()
 void GameLoop::listen()
 {
 	Arrows arrow;
-	bool possible = false;
+	bool moved = false;
 	switch (inter)
 	{
 	case Console:
@@ -48,6 +48,7 @@ void GameLoop::listen()
 	case Graphic:
 		break;
 	default:
+		throw std::invalid_argument("Only Console or Graphic version supported");
 		break;
 	}
 	switch (arrow)
@@ -55,34 +56,44 @@ void GameLoop::listen()
 	case Arrows::Left:
 		while (board->onLeftArrowPressed())
 		{
-			possible = true;
+			moved = true;
 			board->draw();
 		}
 		break;
 	case  Arrows::Rigth:
 		while (board->onRightArrowPressed())
 		{
-			possible = true;
+			moved = true;
 			board->draw();
 		}
 		break;
 	case  Arrows::Up:
 		while (board->onUpArrowPressed())
 		{
-			possible = true;
+			moved = true;
 			board->draw();
 		}
 		break;
 	case  Arrows::Down:
 		while (board->onDownArrowPressed())
 		{
-			possible = true;
+			moved = true;
 			board->draw();
 		}
 		break;
 	default:
+		//board->showMessage("Only arrows alowed");
+		listen();
 		break;
 	}
+	if (!moved)
+	{
+		if (board->onDownArrowPressed(false) || board->onUpArrowPressed(false) || board->onLeftArrowPressed(false) || board->onRightArrowPressed(false))
+			listen();
+		else
+			board->lose();
+	}
+
 }
 
 void GameLoop::listenConsole(Arrows& arrow)

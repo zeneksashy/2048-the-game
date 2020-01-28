@@ -1,6 +1,7 @@
 #include "ConsoleBoard.h"
 #include<stdlib.h>
 #include <iomanip>
+#include<string>
 
 ConsoleBoard::ConsoleBoard():Board()
 {
@@ -13,11 +14,13 @@ ConsoleBoard::~ConsoleBoard()
 
 void ConsoleBoard::win()
 {
+	game_over = true;
 	std::cout << "You won";
 }
 
 void ConsoleBoard::lose()
 {
+	game_over = true;
 	std::cout << "You lose";
 }
 
@@ -40,4 +43,9 @@ void ConsoleBoard::draw()
 
 	}
 	std::cout << "---------------------\n";
+}
+
+void ConsoleBoard::showMessage(const std::string & message)
+{
+	std::cout << message << '\n';
 }

@@ -1,11 +1,15 @@
 #pragma once
 #include "includes.h"
 
-enum Borders
+enum class Borders
 {
 	Left, Right, UP, DOWN
 };
 
+enum class Actions
+{
+	Merge, Move, None
+};
 struct Position
 {
 	int x;
@@ -38,13 +42,13 @@ struct Position
 	{
 		switch (border)
 		{
-		case Left:
+		case Borders::Left:
 			return x == 0;
-		case Right:
+		case Borders::Right:
 			return x == 3;
-		case UP:
+		case Borders::UP:
 			return y == 3;
-		case DOWN:
+		case Borders::DOWN:
 			return y == 0;
 		default:
 			return false;
@@ -60,11 +64,13 @@ public:
 	Tile();
 	~Tile();
 	static bool merge(Tile &dest, Tile & source);
+	constexpr static void isMergePossible(Tile &dest, Tile & source, Actions & action);
 	static const int max_value = 2048;
 	constexpr int getValue() { return value; }
+	void setValue(short val); 
 private:
 
-	void setValue(short val); // and width
+
 	Position position;
 	int value;
 };

@@ -14,7 +14,8 @@ int main()
 	{
 		std::cout << randomize() << '\n';
 	}*/
-	char input[1];
+	auto sm = __cplusplus;
+
 	GameLoop loop(Interface::Console);
 	loop.loop();
 	//std::cout << "hello world\n";

@@ -22,36 +22,60 @@ Tile::~Tile()
 
 bool Tile::merge(Tile & t1, Tile & t2)
 {
-	if (t1.value == -1 && t2.value == -1)
+	Actions action;
+	isMergePossible(t1, t2, action);
+	switch (action)
 	{
-		return false;
-	}
-	if (t1.value == -1 && t2.value != -1)
-	{
-		t1.value = t2.value;
-		t2.value = -1;
-		return true;
-	}
-	if (t1.value != -1 && t2.value == -1)
-	{
-		return false;
-	}
-	if (t1.value != t2.value)
-	{
-		return false;
-	}
-	if (t1.value == t2.value)
-	{
+	case Actions::Merge:
 		t1.value <<= 1;
 		t2.value = -1;
 		return true;
+	case Actions::Move:
+		t1.value = t2.value;
+		t2.value = -1;
+		return true;
+	case Actions::None:
+		return false;
+	default:
+		throw std::logic_error("Some case not handled");
+		break;
 	}
-	throw std::logic_error("Some case not handled");
 
 }
 
+constexpr void Tile::isMergePossible(Tile & t1, Tile & t2, Actions & action)
+{
+	if (t1.value == -1 && t2.value == -1)
+	{
+		action = Actions::None;
+		return;
+	}
+	if (t1.value == -1 && t2.value != -1)
+	{
+		action = Actions::Move;
+		return;
+	}
+	if (t1.value != -1 && t2.value == -1)
+	{
+		action = Actions::None;
+		return;
+	}
+	if (t1.value != t2.value)
+	{
+		action = Actions::None;
+		return;
+	}
+	if (t1.value == t2.value)
+	{
+		action = Actions::Merge;
+		return;
+	}
+	throw std::logic_error("Some case not handled");
+}
+
+
 void Tile::setValue(short val)
 {
-	if (val != max_value)
+	if (val <= max_value)
 		this->value = val;
 }
