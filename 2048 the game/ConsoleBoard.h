@@ -9,8 +9,6 @@ public:
 	~ConsoleBoard();
 
 	// Inherited via Board
-	virtual void win() override;
-	virtual void lose() override;
 	virtual void draw() override;
 	virtual void showMessage(const std::string & message) override;
 };

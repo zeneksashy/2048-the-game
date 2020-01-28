@@ -12,17 +12,6 @@ ConsoleBoard::~ConsoleBoard()
 {
 }
 
-void ConsoleBoard::win()
-{
-	game_over = true;
-	std::cout << "You won";
-}
-
-void ConsoleBoard::lose()
-{
-	game_over = true;
-	std::cout << "You lose";
-}
 
 void ConsoleBoard::draw()
 {

@@ -13,7 +13,7 @@ int randomize_tile()
 	return random_number;
 }
 
-Board::Board():game_over(false)
+Board::Board():game_over(false),mWin(false)
 {
 	for (size_t i = 0; i < max; i++)
 	{
@@ -30,14 +30,20 @@ Board::~Board()
 
 void Board::generateTile()
 {
-	// if all positions full and any merge is imposible
-	//if (!checkAvailable() && !(onLeftArrowPressed(false) || !onRightArrowPressed(false) || !onDownArrowPressed(false) || !onUpArrowPressed(false)))
-	//{
-	//	game_over = true;
-	//	lose();
-	//}
 	Position pos = randomizePosition();
 	positions[pos.x][pos.y].setValue(randomize_tile() << 1);
+}
+
+void Board::win()
+{
+	mWin = true;
+	game_over = true;
+}
+
+void Board::lose()
+{
+	mWin = false;
+	game_over = true;
 }
 
 
@@ -54,23 +60,10 @@ Position Board::randomizePosition()
 	return pos;
 }
 
-bool Board::checkAvailable()
-{
-	for (size_t i = 0; i < max; i++)
-	{
-		for (size_t j = 0; j < max; j++)
-		{
-			if (positions[i][j].getValue()== -1)
-				return true;
-		}
-	}
-	return false;
-}
-
 constexpr bool Board::mergeSubOperation(int i, int j, int i1, int j1)
 {
 	
-	if (positions[i][j].getValue() == 2048)
+	if (positions[i][j].getValue() == 2048 || positions[i1][j1].getValue() == 2048)
 	{
 		win();
 	}

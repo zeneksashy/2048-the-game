@@ -28,12 +28,18 @@ void GameLoop::loop()
 {
 	board->generateTile();
 	board->generateTile();
-	while (!board->isGameOver())
+	while (true)
 	{
 		board->draw();
 		listen();
+		if (board->isGameOver())
+			break;
 		board->generateTile();
 	}
+	if (board->hasWin())
+		board->showMessage("You Won");
+	else
+		board->showMessage("You Lose");
 }
 
 void GameLoop::listen()

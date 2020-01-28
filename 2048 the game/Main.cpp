@@ -14,11 +14,27 @@ int main()
 	{
 		std::cout << randomize() << '\n';
 	}*/
-	auto sm = __cplusplus;
+	char c;
+	bool want_to_play = false;
 
-	GameLoop loop(Interface::Console);
-	loop.loop();
-	//std::cout << "hello world\n";
-	//std::cin.get(input,1);
-	//std::cout << input;
+
+	do
+	{
+		GameLoop loop(Interface::Console);
+		loop.loop();
+		std::cout << "\nDo you want to play again ? press Y if yes\n";
+		std::cin >> c;
+		switch (c)
+		{
+		case 'Y':
+		case 'y':
+			want_to_play = true;
+			break;
+		default:
+			want_to_play = false;
+			break;
+
+		}
+	} while (want_to_play);
+	
 }
